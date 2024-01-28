@@ -1,0 +1,123 @@
+[
+  
+  {
+    "title": "如何将Qt配置到vscode",
+    "url": "/posts/qt-in-vscode/",
+    "categories": "Tools",
+    "tags": "VSCode, Qt",
+    "date": "2023-10-24 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "”将Qt配置到vscode“指的是把Qt库添加到vscode，并在vscode中使用qmake和mingw32-make两个工具完成C++Qt项目的构建和编译。首先在Windows上安装好vscode和QtLinux和Windows类似，只不过安装完成后不需要手动添加环境变量，然后文件路径与Windows不同。安装Qt时至少勾选Qt/MinGW和Developer and Designer ...",
+    "content": "”将Qt配置到vscode“指的是把Qt库添加到vscode，并在vscode中使用qmake和mingw32-make两个工具完成C++Qt项目的构建和编译。首先在Windows上安装好vscode和QtLinux和Windows类似，只不过安装完成后不需要手动添加环境变量，然后文件路径与Windows不同。安装Qt时至少勾选Qt/MinGW和Developer and Designer Tools/MinGW两个组件。第一个组件包含了Qt库和qmake工具，第二个则包含了mingw32-make。安装好后将qmake的路径C:\\Qt\\6.5.2\\mingw_64\\bin和mingw32-make的路径C:\\Qt\\Tools\\mingw1120_64\\bin添加到系统环境变量。路径根据安装时的选项做修改。添加Qt头文件路径首先在vscode里安装C/C++扩展，接下来将对vscode中的C/C++这一extension进行设置，也就是添加Qt头文件的路径。该设置是针对项目做修改，不会应用到整个vscode。先新建一个Qt项目。新建完成后，在vscode中打开该项目文件夹，按下vscode快捷键Ctrl+Shift+P,输入C/C++进行搜索，选择C/C++:Edit Configurations (JSON)，然后vscode会再目录下自动创建.vscode文件夹，并打开其中的c_cpp_properties.json文件，文件内容就是针对本项目的相关设置。修改configurations/includePath的值为：C:/Qt/6.5.2/mingw_64/include/**不妨新建一个main.cpp文件测试一下，在main.cpp中添加#include &lt;QApplication&gt;如果没有红色波浪线报错就说明Qtl头文件添加成功了。Qt项目的构建过程接下来先手动构建、编译一个Qt小程序。main.cpp#include &lt;QApplication&gt;#include &lt;QPushButton&gt;int main(int argc, char **argv){    QApplication app(argc, argv);    QPushButton button(\"hello world\");    button.show();    return app.exec();}这个简单程序就是一个输出hello world的按钮。然后新建.pro项目文件。这个文件里的都是Qt项目的信息，用qmake构建项目必须得有它。project_name.pro：TEMPLATE = appTARGET = hello-world-buttonQT = core guigreaterThan(QT_MAJOR_VERSION, 4): QT += widgetsSOURCES += \\    main.cpp \\HEADERS += \\TARGET的值就是应用的名称。如果项目中有其他源文件需要手动添加到SOURCES和HEADERS下面.接下来在命令行构建项目：qmake .\\project_name.pro根据生成的Makefile编译项目：mingw32-make编译完成后release目录下就有hello-world-button.exe程序了。添加vscode的task不想每一次都手动到命令行编译的话可以将qmake和mingw32-make添加到vscode的task。按下vscode的Ctrl+Shift+P快捷键，搜索task，选择Tasks: Configure Task。或者手动在.vscode目录下创建tasks.json：{    \"version\": \"2.0.0\",    \"tasks\": [        {            \"label\": \"qmake\",            \"type\": \"shell\",            \"command\": \"qmake\",            \"group\": {                \"kind\": \"build\",                \"isDefault\": true            }        },        {            \"label\": \"mingw32-make\",            \"type\": \"shell\",            \"command\": \"mingw32-make\",            \"group\": {                \"kind\": \"build\",                \"isDefault\": true            },            \"dependsOn\": \"qmake\"        }    ]}以后构建编译项目只需按vscode的快捷键Ctrl+Shift+P，再分别执行qmake任务和mingw32-make任务就行了。特别说明一下，如果项目文件project_name.pro未做修改的话，不需要每次都重新构建，直接编译就行。"
+  },
+  
+  {
+    "title": ":wq",
+    "url": "/posts/vim/",
+    "categories": "Tools",
+    "tags": "Vim",
+    "date": "2023-10-21 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "很久没有写博客了,想了想决定坚持写下去。今天分享的是一个叫vim的editor软件,这篇博客的标题就来自于它。维基百科上有一个叫编辑器之战的词条，参战双方分别是vim和emacs,很有意思。:wq是vim中的保存退出命令,经常会用到。 vim最初叫vi(Visual Editor), 是Bill Joy在1976年为BSD Unix系统开发的。vim则是对vi做了改进,即vi improve...",
+    "content": "很久没有写博客了,想了想决定坚持写下去。今天分享的是一个叫vim的editor软件,这篇博客的标题就来自于它。维基百科上有一个叫编辑器之战的词条，参战双方分别是vim和emacs,很有意思。:wq是vim中的保存退出命令,经常会用到。 vim最初叫vi(Visual Editor), 是Bill Joy在1976年为BSD Unix系统开发的。vim则是对vi做了改进,即vi improved。先说说vim的好处,头一个是速度快。在使用vim编辑代码时,不需要频繁地使用鼠标,因为vim使用键盘来移动光标,仅这一点,vim就比其他编辑器快了不少。另一个好处是适用的地方很多，比如下载一个vimium浏览器插件，在浏览网页的时候就可以用简单的vim语法来代替鼠标，而另一个插件wasavi则可以让你在网页上的文本输入框中使用vim语法，不仅网页，一众编辑器都支持vim语法，比如在vscode和Qt Creator中都可以使用vim语法来编辑（不过部分vim操作暂未实现）。接下来总结一些vim语法和编辑器命令，持续更新。Part One前言vim语法是什么：vim语法指的是你在vim的normal模式下执行的操作，比如完成删除光标所在行的代码这一操作只需在normal模式下执行dd。vim模式是什么：vim的模式可以在编辑器左下角找到。对于初学者来说两种模式就够了：insert模式用于编写代码，normal模式用于执行vim操作，比如光标移动、复制粘贴等。本文内容一半是normal下的vim操作。编辑器命令：对vim编辑器的设置，比如:syntax on开启vim的语法高亮，:vs垂直分屏。要在normal模式下执行。这是本文另一半的内容。如何下载vim：建议先在vscode里安装一个vim插件，体验一下，英文好的推荐下载一个learn vim插件，边学边练，效果非常好。linux与vim：这两都跟Unix有很大关系。不妨把学习vim当作学习linux的第一步，毕竟使用linux的过程中需要大量的文本编辑，而且现在的linux发行版大多都默认安装了vim。打开/关闭vim如果使用的是linux上的vim或者windows的gvim，首先遇到的将会是如何新建文件，如何以某个文件名保存以及如何退出vim等问题。  新建时指定文件名比如在linux命令行中执行vim helloworld.c新建一个名为helloworld.的C源代码文件，编辑结束后执行:wq保存该文件并退出。  保存时指定文件名比如执行vim打开vim编辑器但不指定文件名，编辑结束后执行:wq helloworld.c将文件保存为helloworld.c并退出。模式切换 1打开vim时，默认处于normal模式，这时执行vim操作i就切换到了insert模式。输入字符完毕后,按下Esc或者Ctrl+[切换到normal。如果长期用vim，一般会将Caps大写锁定映射成Esc。光标移动normal模式下：  单个字符移动：k上j下h左l右  单个字词移动：  w跳转到下一字词开头  e跳转到下一字词末尾  b跳转到上一字词开头  单个文本串移动：这里的“文本串”特指以空格分隔的文本与单个字词类似地：  W跳转到下一个以空格分隔的文本串开头  E…  B…  行首行末移动：数字0移动到当前行的首字母，$移动到尾字母  上下行移动：j下一行k上一行 （单行代码压缩成多行的情况使用gj，gk）  文本首尾跳转：G跳转到文本最后一行，gg跳转到文本首行复制粘贴删除行normal下:  yy复制光标所在行  p粘贴到光标所在行的下一行  P粘贴到上一行  dd删除光标所在行并且待在normal模式  cc删除光标所在行并且切换insert模式undo与redo      u撤销        Ctrl+r重做  vim语法如果熟练掌握上述vim操作，下面这些就不难了:  vim操作与数字结合      行/字词跳转：比如3j向下跳转到第3行 4e跳转到第4个字词末尾 以及3B等…        复制粘贴：y1k(相当于yk)复制当前行和上一行 y2j复制当前行和下两行 以及2P等…    vim操作互相结合  删除下一个字符/字词：dl/dw  删除当前行和下一行并切换insert模式：cj  复制/删除当前行光标之前和后的文本：y0/d0和y$/d$事实上这些vim操作不是很好分类，列出的也只是一些简单例子假如当前行有10个字母a， 光标位于第一个字母a上执行4d2l你将剩下几个a呢？只有多多练习使用vim最后才能达到随心所欲的效果 👍搜索与重复  搜索/item1：在文本中搜索item1，按下/后vim左下角会变成搜索的目标字词，输入完要搜索的字词后按下回车，vim会自动向后跳转到首个搜索结果，同时左下角会显示当前光标下的字词是第几个搜索结果。?item1：同/，只不过是向前跳转到首个搜索结果  跳转n：跳转到下一个搜索结果N：跳转到上一个搜索结果  重复.操作用于重复上一vim操作，经常跟/一起使用。比如文本中有10个print,需要搜索后逐一跳转并删除该字词。首先搜索print，执行/print后按下回车，光标向后跳转到第一个匹配的搜索结果，执行dw删除首个print,之后再执行9次 n. 操作即可。快速搜素光标下的字词  gd操作  *操作编辑器命令 1 分屏  分屏  :vs垂直方向分屏 左右分(vertical split)  :sp水平方向分屏 上下分  分屏间切换  Ctrl+w j：从上半屏到下半屏  Ctrl+w l：从左半屏到右半屏  关闭当前窗口/分屏  Ctrl+w q  交换分屏位置  Ctrl+w Shift+l：光标在左屏时执行，交换左右分屏，上下类似"
+  },
+  
+  {
+    "title": "Windows 修复 EFI 分区",
+    "url": "/posts/how-to-repair-windows-efi-partition/",
+    "categories": "OS",
+    "tags": "Windows",
+    "date": "2023-07-12 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "EFI分区里有 bootmanager 和 bootloader装有多个操作系统的电脑开机时，首先进入bootmanager界面，选择加载哪个bootloader，然后bootloader再 boot 对应系统。创建 EFI 分区如果只是分区里的文件损坏，efi分区还在的话可以跳过这一步。Windows 无法自己创建EFI分区，要借助第三方工具。我使用的是 Arch Linux 的 Live...",
+    "content": "EFI分区里有 bootmanager 和 bootloader装有多个操作系统的电脑开机时，首先进入bootmanager界面，选择加载哪个bootloader，然后bootloader再 boot 对应系统。创建 EFI 分区如果只是分区里的文件损坏，efi分区还在的话可以跳过这一步。Windows 无法自己创建EFI分区，要借助第三方工具。我使用的是 Arch Linux 的 LiveOS，烧录到U盘插电脑boot后进行操作。分出适当的空间后，创建文件系统即可mkfs.fat -F32 /dev/sda3复制文件有了EFI分区后，将合适的文件复制粘贴过去就完成修复了。下载对应 Windows 的iso文件，烧录到U盘里。然后插电脑boot，选择命令行修复操作系统。运行diskpart工具diskpart列出硬盘list disk选择对应硬盘sel disk 0列出分区list volume在列出的几个分区中根据FAT32文件系统找到efi分区选择efi分区sel volume 2分配盘符assign letter K:退出diskpartexit切换到EFI分区目录cd /d K:复制bcd bootloader的配置文件到当前目录%WINDIR%\\System32\\Config\\BCD-Template修改文件属性attrib BCD -s -h -r重命名文件ren BCD BCD.bak复制 UEFI 所需要的文件bcdboot C:\\Windows /l en-us /s k: /f ALL到此结束，重启后电脑就正常boot了。参考链接"
+  },
+  
+  {
+    "title": "如何在 debian 上安装使用 tor",
+    "url": "/posts/How-to-use-tor-on-linux/",
+    "categories": "OS",
+    "tags": "Linux, Network",
+    "date": "2023-06-29 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "简介tor的全称是the onion router,是用来保护互联网隐私的一个开源软件。这篇文章是在debian上安装使用tor代理的过程。  使用tor的 前提 是能够连接到tor的relay 见下图安装在 debian 上安装 tor 只需要执行一条命令sudo apt-get install tor配置编辑torrc文件sudo vi /etc/torrc找到并注释下面这行#Contr...",
+    "content": "简介tor的全称是the onion router,是用来保护互联网隐私的一个开源软件。这篇文章是在debian上安装使用tor代理的过程。  使用tor的 前提 是能够连接到tor的relay 见下图安装在 debian 上安装 tor 只需要执行一条命令sudo apt-get install tor配置编辑torrc文件sudo vi /etc/torrc找到并注释下面这行#ControlPort 9051再找到下面这行 注释并把 1 改成 0#CookieAuthentication 1重启 torsudo /etc/init.d/tor restart测试查看 真实的公网ipcurl ifconfig.me查看 使用tor后的iptorify curl ifconfig.me 2&gt;/dev/null对于这条命令：  torify =&gt; 通过 tor 执行 curl 命令  2&gt;/dev/null =&gt; 重定向 torify 产生的无关信息获取新ip如果连接成功，上一步中将输出不同的 ip ，那么当前 shell 的网络流量就是经过 tor circuit 代理的。如果想更换 tor circuit ，可以执行echo -e 'AUTHENTICATE \"\"\\r\\nsignal NEWNYM\\r\\nQUIT' | nc 127.0.0.1 9051然后再根据 测试 中给出的步骤重新检查 ip为firefox浏览器开启tor      编辑配置文件 torrc 找到并注释    #SocksPort 9050            在火狐浏览器中找到 Network Settings 开始手动设置:        SOCKS Host 为 127.0.0.1        Port 为 9050        使用 SOCKS v5 代理选项        No Proxy for 为 127.0.0.1        勾选 Proxy DNS when using SOCKS v5        最后再来测试一下，点击访问 tor测试站点  nyx图形化界面nyx 在安装 tor 的时候默认一并安装，是一个与 tor 配合使用的流量监控界面 执行 nyx 命令即可打开 nyx参考链接      tor 命令行        tor firefox    在使用Tor时请遵守当地法律法规"
+  },
+  
+  {
+    "title": "如何安装 Arch Linux",
+    "url": "/posts/How-to-install-Arch-Linux/",
+    "categories": "OS",
+    "tags": "Linux",
+    "date": "2023-05-11 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "联网进入 iwd 的交互式提示符iwctl列出可用的网络设备device list使用无线网卡 wlan0 扫描可用wlanstation wlan0 scan 列出扫描到的wlan网络station wlan0 get-networks连接wlan网络station wlan0 connect wifiname 退出 iwd 提示符exit测试网络连接ping baidu.com更换软件源...",
+    "content": "联网进入 iwd 的交互式提示符iwctl列出可用的网络设备device list使用无线网卡 wlan0 扫描可用wlanstation wlan0 scan 列出扫描到的wlan网络station wlan0 get-networks连接wlan网络station wlan0 connect wifiname 退出 iwd 提示符exit测试网络连接ping baidu.com更换软件源vim /etc/pacman.d/mirrorlist一些国内高校的软件源Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.cqu.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.dgut.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.neusoft.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.nju.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.sjtug.sjtu.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$archServer = https://mirrors.xjtu.edu.cn/archlinux/$repo/os/$arch通过网络同步日期和时间timedatectl set-ntp true分盘列出可用存储lsblk或者用下面这条命令fdisk -l特别注意其中的磁盘标签类型，英文 disk label tepy ，BIOS 安装得是 dos，UEFI 得是 gpt如果不对，可以下载 gptdisk 格式化磁盘后设置磁盘标签类型gdisk /dev/sda #==&gt; pacman -S gptdisk对 sda 分盘fdisk /dev/sda或者cfdisk /dev/sda关于如何分盘:  BIOS 电脑：BIOS电脑不需要 efi分区，可以这么分：      1个：只分根分区 /        2个：/ 和 swap分区 OR / 和 /home  如果电脑的内存足够，swap分区就没必要了，因为它只是在电脑内存不够时救急用的。  更多：比如放系统日志的 var 分区和放临时文件的 tmp 分区各自再分一个。  UEFI 电脑：UEFI电脑额外需要一个 efi分区 ，其他的都同 BIOS 一样。关于文件系统:为 swap分区 创建文件系统mkswap /dev/sda2为 efi分区 创建文件系统mkfs.fat -F32 /dev/sda3为 /、var、tmp 创建文件系统mkfs.ext4 /dev/sda1  sda1、sda2 是 盘符，注意区分接下来开始 挂载 各个分区若有swap先启用swap分区，挂载顺序从里往外，没有的目录手动创建。swapon /dev/sda1 mount /dev/sda2 /mnt/boot/efimount /dev/sda3 /mnt #==&gt; 根分区挂 /mnt下载系统组件安装 keyringpacman -Sy archlinux-keyring安装 arch linux 系统pacstrap /mnt base linux linux-firmware vim networkmanager network-manager-applet base-devel linux-headers efibootmgr BIOS 安装不需要 efibootmgr将文件系统的分区表写入新系统genfstab -U /mnt &gt;&gt; /mnt/etc/fstabchroot并配置新系统chrootarch-chroot /mnt设置时区ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime设置硬件钟hwclock --systohc设置语言并启用vim /etc/locale.genlocale-gen 设置环境变量 LANGecho LANG=en_US.UTF-8 &gt;&gt; /etc/locale.conf设置hostname为abcdecho abcd &gt;&gt; /etc/hostname编辑 hosts 文件vim etc/hosts编辑成下面这个样子127.0.0.1\tlocalhost::1\t\t    localhost127.0.0.1\tabcd.localdomain\tabcd设置 root 密码passwd #==&gt; password for root安装bootloader安装 grubpacman -S grub 安装bootloadergrub-install /dev/sdagrub-mkconfig -o /boot/grub/grub.cfg到此安装结束，退出 chrootexit重启系统，拿走U盘reboot 开机后启动网络服务systemctl start NetworkManagersystemctl enable NetworkManager开始联网nmtui添加用户 以用户名dfg为例useradd -m -G wheel dfg设置用户密码passwd dfg接下来为用户添加 sudo 权限在 Arch Linux 中就是将用户添加到 wheel 组里。用 vim 打开 visudo 文件EDITOR=vim visudo找到# %wheel ALL=(ALL:ALL) ALL把前面的 # 注释掉就可以保存退出了"
+  },
+  
+  {
+    "title": "Git 入门",
+    "url": "/posts/git-intro/",
+    "categories": "Tools",
+    "tags": "Git",
+    "date": "2023-04-14 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "简介git 是一个分布式版本控制软件，简单说就是管理代码的，属于程序员必备技能。更多内容参考维基百科的介绍，这里不再赘述。git英文维基git中文维基安装这里是 Linux 的安装过程。Windows 可以去 官网 下载。安装 gitsudo apt-get install git 查看版本号git -v 配置和使用设置用户名和邮箱git config --global user.name ...",
+    "content": "简介git 是一个分布式版本控制软件，简单说就是管理代码的，属于程序员必备技能。更多内容参考维基百科的介绍，这里不再赘述。git英文维基git中文维基安装这里是 Linux 的安装过程。Windows 可以去 官网 下载。安装 gitsudo apt-get install git 查看版本号git -v 配置和使用设置用户名和邮箱git config --global user.name \"用户名\"git config --global user.email \"example@xxx.xxx\"基本信息设置完成后就可以通过 https URL 来克隆一个开源仓库了。比如用下面这条命令克隆我在github上的 profile 仓库。git clone https://github.com/oodenough/oodenough克隆完成后应该能看到目录下就一个 README.md 文件。这是显示在 github 个人主页上的介绍内容。要想连接到自己在 github 上的私有仓库，需要向 github 上的账户添加本机的 ssh密钥 ,添加完成后就可以将私有仓库克隆到本地，修改代码后又推送 push 到远程的仓库。在这个过程中 ssh密钥 的作用是验证身份。在命令行用以下命令生成密钥对 key pairs。ssh-keygen -t rsa -C \"备注\" -C \"备注\" 可以备注一些相关信息，也可以省略。生成的密钥对默认路径是 ~/.sshls ~/.ssh可以看到目录下有两个密钥文件，分别是 id_rsa 和 id_rsa.pub。前者是 私钥, 后者是 公钥。前者保存在本机，后者添加到 github 账户，settings =&gt; ssh and GPG keys =&gt; New SSH key克隆自己的私有仓库git clone git@github.com:username/repository-name.git 把 username 替换成你的 github 用户名，repository-name 替换成你要克隆的仓库名。注意这里使用的 URL 不再是 https 而是 ssh.克隆时 github 会把公钥发送到本机与私钥匹配，对上了证明你对该私有仓库是有权限的，然后克隆才得以正常进行。推送时同理。workflow这里对 Git 的 workflow 做一个简单的介绍。git 仓库结构如下分别是 工作区 、 暂存区 和 仓库.当前对代码的修改是在工作区进行的，而代码最终会用 git commit 命令提交到仓库，暂存区顾名思义是将本地修改后的代码提交到仓库的一个过渡区。如果当前工作区的代码出现问题，可以从暂存区拉取代码来覆盖工作区。所以接下来分别从代码提交和代码拉取来介绍 git 的几条常用命令。提交初始化仓库先创建个文件夹mkdir myrepocd myrepo初始化本地仓库git init .初始化完成后 Git 会在目录下添加一个隐藏的 .git 文件，在之后你提交的代码，以及所做的更改都会记录在这个文件里。添加第一个文件echo 'initial' &gt;&gt; README.md这里所作的便是在工作区创建了一个 README.md 文件，文件内容是 initial查看仓库状态信息git status也可以添加参数 -s （short）查看更简短的状态信息由于该文件是首次出现在工作区，此时显示的信息应该是 untracked。也就是说 git 没有在追踪记录这个文件。将文件添加到暂存区暂存区英文也可以叫 index添加命令如下git add README.md再次查看 git 状态，可以发现提示信息已经改变。将文件添加到仓库git commit -m 'add README.md'上面这条命令将暂存区的文件添加到仓库， 为了防止以后版本回退的时候不知道这条记录做了什么改变，在 -m 'add README.md' 里可以添加一些相关的提示信息。查看仓库的记录git log可以添加参数 --pretty=oneline 查看更精简的单行 commit 记录到这里我们都是在本地提交，从 working directory 到 staging area 再到 local repository.接下来是将本地仓库的 commit 记录推送到 github 的远程版本库。远程 origin 的设置首先去 github 创建一个新仓库然后为本地仓库设置远程 origin 为刚刚创建的 github 上的 repository用以下命令查看当前仓库的远程 origin 信息git remote -v移除当前仓库的远程 origingit remote remove origin为当前仓库添加远程仓库 origin 源git remote add origin git@github.com:username/repository-name.git这里使用的 URL 是 ssh，原因前面讲过了：在对私有仓库执行相关操作时需要 ssh 密钥对验证身份在本地仓库已经有一条 commit 的情况下，就可以开始推送了git push -u origin main这条命令的意思是向远程 origin 仓库的 main 分支推送本地版本库中的 commits，这里不再对分支展开，以后用到再分享。在之后的推送中可以不再指定 main 分支，只需要执行 git push 命令就默认向 main 推送了。接下来说说如何回退代码。回退暂存区到工作区（不涉及仓库）假设暂存区中存在文件 file1，也就是说 file1 执行过 git add file1 命令。此时，如果你将工作区中 file1 的代码改得一塌糊涂，或者说 file1 直接被你删除了，那么可以用下面这条命令将工作区中的 file1 回退到暂存区中的 fiel1  也就是从 暂存区 拉取到 工作区 git restore file1  当前工作区的 file1 将会 丢失回退之前可以用以下命令对比当前工作区的file1与暂存区中的file1的区别git diff file1版本库到暂存区（不涉及工作区）假如说你把 working direcroty 的代码改得乱七八糟（或者删除）之后，还将代码 add 到了 staging area，为了避免被你修改得面目全非的代码在下一次 git commit 时混入仓库，可以用下面这条命令将暂存区中的 file1 回退到上一次 commit 时的状态  也就是从 版本库 拉取到 暂存区 和 工作区git restore --staged file1  同理，当前暂存区的 file1 将会 丢失总结本文其实是对我过去几个月使用 git 的一个总结。对于个人项目的代码管理，本文中涉及的命令已经够用了。但是对于多人合作的项目管理还不够，所以我创建了 这个仓库欢迎克隆仓库，向我发送 pull request， 跟我一起学习 git 和 github ！"
+  },
+  
+  {
+    "title": "oh my zsh 简单配置使用",
+    "url": "/posts/Oh-my-zsh/",
+    "categories": "Tools",
+    "tags": "Shell",
+    "date": "2023-04-11 00:00:00 +0800",
+    
+
+
+
+
+
+    
+    "snippet": "简介oh-my-zsh 是 zsh 的一个框架(framework)，在该框架下不仅可以安装插件来提高命令行的工作效率，还能够安装主题来美化终端，改善日常使用体验。本文简单介绍 oh-my-zsh 的安装使用。安装 zshsudo apt-get install zshchsh -s $(which zsh) #==&gt; 更改当前用户shell为zsh安装 oh-my-zshsh -c ...",
+    "content": "简介oh-my-zsh 是 zsh 的一个框架(framework)，在该框架下不仅可以安装插件来提高命令行的工作效率，还能够安装主题来美化终端，改善日常使用体验。本文简单介绍 oh-my-zsh 的安装使用。安装 zshsudo apt-get install zshchsh -s $(which zsh) #==&gt; 更改当前用户shell为zsh安装 oh-my-zshsh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"安装插件  语法高亮插件git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting  自动补全插件git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions  配置文件 ~/.zshrcplugins={git vi-mode zsh-syntax-highlighting zsh-autosuggestions} 安装主题  安装 powerlevel10kgit clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k  安装 nerd-fonts 字体参考这个链接  https://github.com/ryanoasis/nerd-fonts我用的是 Meslo Nerd Font  配置文件 ~/.zshrcZSH_THEME=\"powerlevel10k/powerlevel10k\"   主题设置执行以下命令后根据提示设置即可。p10k configure "
+  }
+  
+]
+
